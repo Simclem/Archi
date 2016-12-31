@@ -11,6 +11,7 @@ class Entry {
   int value;        // the line's word (1 cache-line = 1 word)
   int tag;          // the line's tag
   boolean isValid;  // the validity bit
+  public boolean dirtyBit;
 }
 
 public class DirectMappedCache implements Memory {
@@ -67,6 +68,7 @@ public class DirectMappedCache implements Memory {
       // hit
       operationTime = accessTime;
       stats.reads.add(true, operationTime);
+      entry.dirtyBit = false;
     } else {
       // miss
       entry.value = memory.read(address);
@@ -74,6 +76,7 @@ public class DirectMappedCache implements Memory {
       entry.isValid = true;
       operationTime = memory.getOperationTime() + accessTime;
       stats.reads.add(false, operationTime);
+      entry.dirtyBit = true;
     }
     return entry.value;
   }
@@ -84,23 +87,75 @@ public class DirectMappedCache implements Memory {
   }
 
   private void writeAround(int address, int value) {
+      
+      
     Entry entry = entries.get(toIndex(address));
+    if (entry.dirtyBit ==false)
+    {
+        entry.value = value;
+        entry.dirtyBit = true;
+    }
+    else
+    {
+       memory.write(address, entry.value);
+       entry.value = value;
+    }
+      
+    // Implémentation du write through
+      /*
+     memory.write(address, value);
+     this.entries.get(toIndex(address)).value = value;
+    operationTime = memory.getOperationTime() + accessTime;
+    stats.writes.add(false, operationTime);*/
+      
+      
+      
+      
+      
+      //Write Around
+      /*Entry entry = entries.get(toIndex(address));
     if (entry.isValid && entry.tag == toTag(address)) {
       entry.isValid = false;
     }
     memory.write(address, value);
     operationTime = memory.getOperationTime() + accessTime;
-    stats.writes.add(false, operationTime);
+    stats.writes.add(false, operationTime);*/
   }
 
   private void writeThrough(int address, int value) {
-    // TODO
+      
+    Entry entry = entries.get(toIndex(address));    
+    memory.write(address, value);
+    entry.value = value;
+    operationTime = memory.getOperationTime() + accessTime;
+    stats.writes.add(false, operationTime);
   }
 
   private void writeBack(int address, int value) {
-    // TODO
+    Entry entry = entries.get(toIndex(address));
+    if (entry.dirtyBit == false) 
+    {
+        entry.value = value;
+        entry.dirtyBit = true;
+    }
+    else
+    {
+       memory.write(address, entry.value);
+       entry.value = value;
+       entry.dirtyBit =true;
+    }
+// TODO
   }
-
+public void flush()
+{
+    for (int i = 0 ; i < entries.size(); i ++)
+    {
+        if (entries.get(i).dirtyBit == true)
+        {
+            memory.write(entries.get(i).tag, entries.get(i).value);
+        }
+    }
+}
   @Override
   public int getOperationTime() {
     return operationTime;

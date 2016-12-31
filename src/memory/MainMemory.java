@@ -69,4 +69,7 @@ public class MainMemory implements Memory {
     return Arrays.toString(read(address, size));
   }
 
+  public void flush()
+  {
+  }
 }

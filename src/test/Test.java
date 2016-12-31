@@ -143,8 +143,8 @@ public class Test {
     MainMemory memory;
     DirectMappedCache cache;
 
-    // Exécution d'accès aléatoires en mémoire avec cache
-    System.out.println("Execution d'accès aléatoire avec cache");
+    // Exï¿½cution d'accï¿½s alï¿½atoires en mï¿½moire avec cache
+    System.out.println("Execution d'acces aleatoire avec cache");
 
     memory = new MainMemory(1024 * 1024, 50);
     cache = new DirectMappedCache(1024, 10, memory);
@@ -153,8 +153,8 @@ public class Test {
     System.out.println("cache  stats: " + cache.getStats());
     System.out.println("memory stats: " + memory.getStats());
 
-    // Exécution du tri sélection en mémoire sans cache
-    System.out.println("\nExecution du tri sélection sans cache");
+    // Exï¿½cution du tri sï¿½lection en mï¿½moire sans cache
+    System.out.println("\nExecution du tri sï¿½lection sans cache");
 
     memory = new MainMemory(1024 * 1024, 50);
 
@@ -166,8 +166,8 @@ public class Test {
     System.out.println("array=" + memory.dump(0, array.length));
     System.out.println("memory stats: " + memory.getStats());
 
-    // Exécution du tri sélection en mémoire avec cache
-    System.out.println("\nExecution du tri sélection avec cache");
+    // Exï¿½cution du tri sï¿½lection en mï¿½moire avec cache
+    System.out.println("\nExecution du tri sï¿½lection avec cache");
 
     memory = new MainMemory(1024 * 1024, 50);
     cache = new DirectMappedCache(1024, 10, memory);
@@ -175,7 +175,7 @@ public class Test {
     memory.write(0, array);
 
     selectionSort(cache, 0, array.length);
-
+    cache.flush();
     System.out.println("array=" + memory.dump(0, array.length));
     System.out.println("cache  stats: " + cache.getStats());
     System.out.println("memory stats: " + memory.getStats());
